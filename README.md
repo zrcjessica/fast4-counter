@@ -32,6 +32,60 @@ Serving alternates each game, and follows the one-point-then-two pattern inside
 a tie-break; after a tie-break, whoever served it first receives first in the
 next set.
 
+## Running it on your own iPhone
+
+You don't need the App Store, and you don't need the paid Apple Developer
+Program either — a **free Apple ID is enough** to put this on your own phone.
+The device must be running iOS 17 or later.
+
+### One-time setup
+
+1. Add your Apple ID to Xcode under **Settings → Accounts**.
+2. Set your own signing team: select the **Fast4** target → **Signing &
+   Capabilities** → **Team**. The `DEVELOPMENT_TEAM` committed here belongs to
+   this repo's author, so anyone else has to change it. If signing complains,
+   change `PRODUCT_BUNDLE_IDENTIFIER` too — bundle IDs are globally unique, and
+   `com.jlzhou.Fast4` is taken.
+3. Connect the iPhone by cable, unlock it, and tap **Trust This Computer**.
+4. On the phone, turn on **Settings → Privacy & Security → Developer Mode**,
+   then restart when prompted. This is required on iOS 16 and later, and the
+   row only appears once a Mac running Xcode has been connected.
+
+### Install
+
+Pick your iPhone in Xcode's destination menu and press **⌘R**.
+
+Or from the command line, with the phone connected:
+
+```sh
+xcodebuild -project Fast4.xcodeproj -scheme Fast4 \
+  -destination 'generic/platform=iOS' -derivedDataPath build \
+  -allowProvisioningUpdates build
+
+xcrun devicectl list devices        # copy your device's identifier
+xcrun devicectl device install app --device <identifier> \
+  build/Build/Products/Debug-iphoneos/Fast4.app
+```
+
+`-allowProvisioningUpdates` is what lets Xcode create the provisioning profile
+for you; without it the build fails with "No profiles for 'com.jlzhou.Fast4'
+were found".
+
+On first launch the phone will refuse to open an app from an unknown developer.
+Trust it once under **Settings → General → VPN & Device Management** → your
+Apple ID → **Trust**.
+
+### The seven-day catch
+
+On a free Apple ID the provisioning profile is valid for **exactly seven days**.
+After that the app stops launching until you connect the phone and run it again,
+which re-signs it silently. Free accounts are also limited to roughly three
+sideloaded apps on a device at once.
+
+Paid membership ($99/yr) extends profiles to a year and covers up to 100
+registered devices — that, rather than App Store access as such, is what the fee
+buys you if you only ever intend to run this yourself.
+
 ## How it's put together
 
 - `Fast4/Model/MatchState.swift` — the scoring engine. Only `config` and
