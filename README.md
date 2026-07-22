@@ -5,10 +5,13 @@ buttons, an undo button, and the format handled for you.
 
 Open `Fast4.xcodeproj` in Xcode and run. iOS 17+, iPhone and iPad.
 
-| Home | Scoreboard | Sudden death | Deciding point |
-| :--: | :--: | :--: | :--: |
-| <img src="docs/screenshots/home.png" width="200" alt="Setup screen: player name fields, a best-of-3 or best-of-5 picker, a match tie-break checkbox, a first-serve picker, a start button, and a summary of the Fast4 rules."> | <img src="docs/screenshots/scoreboard.png" width="200" alt="Scoreboard in set 2, game 3. Alice leads, having won set 1 by 4 games to 2; games are level at 1-1 and the current game stands at 30-0."> | <img src="docs/screenshots/sudden-death.png" width="200" alt="Scoreboard at 40-40 with a red SUDDEN DEATH banner beneath the set and game indicator."> | <img src="docs/screenshots/deciding-point.png" width="200" alt="Scoreboard during a set tie-break at 4 points all, with a red DECIDING POINT banner."> |
-| Choose players, format and first serve | Sets, games and points, with a ball marking the server | At 40-40 the next point takes the game | At 4-4 in a tie-break, the next point takes the set |
+| Home | Scoreboard |
+| :--: | :--: |
+| <img src="docs/screenshots/home.png" width="340" alt="Setup screen: player name fields, a best-of-3 or best-of-5 picker, a match tie-break checkbox, a first-serve picker, a start button, and a summary of the Fast4 rules."> | <img src="docs/screenshots/scoreboard.png" width="340" alt="Scoreboard in set 2, game 3. Alice leads, having won set 1 by 4 games to 2; games are level at 1-1 and the current game stands at 30-0."> |
+| Choose players, format and first serve | Sets, games and points, with a ball marking the server |
+| **Sudden death** | **Deciding point** |
+| <img src="docs/screenshots/sudden-death.png" width="340" alt="Scoreboard at 40-40 with a red SUDDEN DEATH banner beneath the set and game indicator."> | <img src="docs/screenshots/deciding-point.png" width="340" alt="Scoreboard during a set tie-break at 4 points all, with a red DECIDING POINT banner."> |
+| At 40-40 the next point takes the game | At 4-4 in a tie-break, the next point takes the set |
 
 Every point is one tap; the undo button rewinds any mistake, including one that
 closed out a game or a set. The deciding-point banner is the only red in the
