@@ -11,7 +11,7 @@ struct SetupView: View {
 
     var body: some View {
         ZStack {
-            GrassField()
+            CourtField()
 
             ScrollView {
                 VStack(spacing: PixelTheme.unit * 4) {
@@ -33,10 +33,18 @@ struct SetupView: View {
 
     private var title: some View {
         VStack(spacing: PixelTheme.unit) {
-            Text("FAST 4")
-                .font(.pixel(40))
-                .foregroundStyle(PixelTheme.parchment)
-                .shadow(color: PixelTheme.ink, radius: 0, x: PixelTheme.unit, y: PixelTheme.unit)
+            HStack(spacing: PixelTheme.unit * 3) {
+                PixelIcon(rows: PixelArt.racket,
+                          color: PixelTheme.parchment,
+                          detail: PixelTheme.sprout.opacity(0.7))
+                    .frame(width: 33, height: 42)
+                Text("FAST 4")
+                    .font(.pixel(40))
+                    .foregroundStyle(PixelTheme.parchment)
+                    .shadow(color: PixelTheme.ink, radius: 0, x: PixelTheme.unit, y: PixelTheme.unit)
+                PixelIcon(rows: PixelArt.ball, color: PixelTheme.parchment)
+                    .frame(width: 22, height: 22)
+            }
             Text("TENNIS SCOREBOARD")
                 .font(.pixel(11))
                 .foregroundStyle(PixelTheme.sprout)

@@ -3,7 +3,9 @@ import CoreText
 
 // A small pixel-art design system: palette, pixel font, chunky panels, beveled
 // buttons and hand-plotted icons. Everything sits on a 4pt grid with square
-// corners so the app reads as a 16-bit farming game rather than a modern app.
+// corners so the app reads as a 16-bit sports game rather than a modern app.
+// The motifs are all tennis: a mown grass court behind everything, a net
+// dividing the two players on the scoreboard, a racket in the title.
 
 // MARK: - Palette
 
@@ -22,9 +24,8 @@ enum PixelTheme {
     static let unit: CGFloat = 4
 
     static let ink      = Color(pixel: 0x1B3410)   // outlines and lettering
-    static let soil     = Color(pixel: 0x23450F)   // background base
-    static let grass    = Color(pixel: 0x2B5513)   // background checker
-    static let moss     = Color(pixel: 0x3C7A1C)   // background tufts
+    static let soil     = Color(pixel: 0x23450F)   // court base
+    static let grass    = Color(pixel: 0x2B5513)   // the lighter mown stripe
     static let green    = Color(pixel: 0x5A9B2C)
     static let leaf     = Color(pixel: 0x86C63F)
     static let sprout   = Color(pixel: 0xB4DE7C)
@@ -100,45 +101,99 @@ enum PixelText {
 
 // MARK: - Background
 
-/// A checkerboard field with sparse tufts, in the spirit of a tilemap.
-struct GrassField: View {
+/// A grass court seen from above: mown stripes running the length of the court,
+/// with the singles markings and the net laid over them. A grass court is
+/// already white-on-green, so this stays inside the palette.
+struct CourtField: View {
     var body: some View {
         Canvas { context, size in
-            let tile: CGFloat = 16
-            let cols = Int(size.width / tile) + 1
-            let rows = Int(size.height / tile) + 1
+            let unit = PixelTheme.unit
+            /// Everything lands on the 4pt grid, so nothing renders half-lit.
+            func snap(_ value: CGFloat) -> CGFloat { (value / unit).rounded() * unit }
 
-            for row in 0..<rows {
-                for col in 0..<cols where (row + col).isMultiple(of: 2) {
+            // Mown stripes, running baseline to baseline.
+            let stripe: CGFloat = 32
+            var x: CGFloat = 0
+            var lit = false
+            while x < size.width {
+                if lit {
                     context.fill(
-                        Path(CGRect(x: CGFloat(col) * tile, y: CGFloat(row) * tile,
-                                    width: tile, height: tile)),
+                        Path(CGRect(x: x, y: 0, width: stripe, height: size.height)),
                         with: .color(PixelTheme.grass)
                     )
                 }
+                lit.toggle()
+                x += stripe
             }
 
-            // Deterministic scatter, so the field never shimmers between frames.
-            for row in 0..<rows {
-                for col in 0..<cols {
-                    var hash = UInt32(truncatingIfNeeded: row &* 73856093 ^ col &* 19349663)
-                    hash ^= hash >> 13
-                    hash = hash &* 2654435761
-                    guard hash % 23 == 0 else { continue }
-                    let x = CGFloat(col) * tile + 4
-                    let y = CGFloat(row) * tile + 4
-                    // A three-blade tuft.
-                    for (dx, dy, h) in [(0.0, 4.0, 4.0), (4.0, 0.0, 8.0), (8.0, 4.0, 4.0)] {
-                        context.fill(
-                            Path(CGRect(x: x + dx, y: y + dy, width: 4, height: h)),
-                            with: .color(PixelTheme.moss)
-                        )
-                    }
-                }
+            // Court markings, kept faint so the panels stay readable on top.
+            let paint = PixelTheme.parchment.opacity(0.30)
+            let left = snap(size.width * 0.11)
+            let right = snap(size.width * 0.89)
+            let top = snap(size.height * 0.06)
+            let bottom = snap(size.height * 0.94)
+            let net = snap((top + bottom) / 2)
+
+            func horizontal(_ y: CGFloat, _ x0: CGFloat, _ x1: CGFloat, _ color: Color = paint) {
+                context.fill(Path(CGRect(x: x0, y: snap(y), width: x1 - x0, height: unit)),
+                             with: .color(color))
             }
+            func vertical(_ x: CGFloat, _ y0: CGFloat, _ y1: CGFloat, _ color: Color = paint) {
+                context.fill(Path(CGRect(x: snap(x), y: y0, width: unit, height: y1 - y0)),
+                             with: .color(color))
+            }
+
+            horizontal(top, left, right)          // baselines
+            horizontal(bottom, left, right)
+            vertical(left, top, bottom)           // sidelines
+            vertical(right - unit, top, bottom)
+
+            // The service line sits 21 feet from the net, of the 39 feet to the
+            // baseline — so a little over half way out.
+            let service = snap((net - top) * 21 / 39)
+            horizontal(net - service, left, right)
+            horizontal(net + service, left, right)
+            vertical((left + right) / 2, net - service, net + service)
+
+            // The net, brighter, with its posts standing outside the sidelines.
+            horizontal(net, left - unit * 4, right + unit * 4,
+                       PixelTheme.parchment.opacity(0.48))
         }
         .background(PixelTheme.soil)
         .ignoresSafeArea()
+    }
+}
+
+/// A net in elevation: the white tape along the top, mesh hanging below it.
+/// Used to separate the two players on the scoreboard — they are, after all,
+/// on opposite sides of it.
+struct PixelNet: View {
+    var height: CGFloat = 20
+
+    var body: some View {
+        Canvas { context, size in
+            let unit = PixelTheme.unit
+            let mesh = PixelTheme.green.opacity(0.45)
+
+            // Tape.
+            context.fill(Path(CGRect(x: 0, y: 0, width: size.width, height: unit)),
+                         with: .color(PixelTheme.ink))
+
+            // Mesh: a grid of cords hanging from the tape.
+            var y = unit * 2
+            while y < size.height {
+                context.fill(Path(CGRect(x: 0, y: y, width: size.width, height: unit / 2)),
+                             with: .color(mesh))
+                y += unit * 2
+            }
+            var x: CGFloat = 0
+            while x < size.width {
+                context.fill(Path(CGRect(x: x, y: unit, width: unit / 2, height: size.height - unit)),
+                             with: .color(mesh))
+                x += unit * 2
+            }
+        }
+        .frame(height: height)
     }
 }
 
@@ -215,10 +270,12 @@ struct PixelButtonStyle: ButtonStyle {
 
 // MARK: - Icons
 
-/// A tiny bitmap, plotted by hand. "#" is on, anything else is off.
+/// A tiny bitmap, plotted by hand. "#" draws in `color`, "+" in `detail`
+/// (racket strings, for instance); anything else is left blank.
 struct PixelIcon: View {
     let rows: [String]
     var color: Color = PixelTheme.ink
+    var detail: Color?
 
     var body: some View {
         Canvas { context, size in
@@ -228,14 +285,21 @@ struct PixelIcon: View {
             guard scale >= 1 else { return }
             let originX = ((size.width - scale * CGFloat(columns)) / 2).rounded()
             let originY = ((size.height - scale * CGFloat(rows.count)) / 2).rounded()
+            let stringing = detail ?? color
 
             for (y, row) in rows.enumerated() {
-                for (x, character) in row.enumerated() where character == "#" {
+                for (x, character) in row.enumerated() {
+                    let ink: Color
+                    switch character {
+                    case "#": ink = color
+                    case "+": ink = stringing
+                    default: continue
+                    }
                     context.fill(
                         Path(CGRect(x: originX + CGFloat(x) * scale,
                                     y: originY + CGFloat(y) * scale,
                                     width: scale, height: scale)),
-                        with: .color(color)
+                        with: .color(ink)
                     )
                 }
             }
@@ -244,6 +308,25 @@ struct PixelIcon: View {
 }
 
 enum PixelArt {
+    /// Head, stringbed and handle. "+" is the stringing, drawn as an open
+    /// lattice — filling the head solid reads as a lollipop, not a racket.
+    static let racket = [
+        "...#####...",
+        "..#.....#..",
+        ".#.+.+.+.#.",
+        "#..+.+.+..#",
+        "#+++++++++#",
+        "#..+.+.+..#",
+        "#+++++++++#",
+        ".#.+.+.+.#.",
+        "..#.....#..",
+        "...#####...",
+        ".....#.....",
+        ".....#.....",
+        ".....#.....",
+        "....###....",
+    ]
+
     static let undo = [
         "....#....",
         "...##....",

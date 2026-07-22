@@ -1,6 +1,6 @@
 # Fast4
 
-An iOS scoreboard for Fast4 tennis, dressed as a 16-bit farming game. Two big
+An iOS scoreboard for Fast4 tennis, drawn as a 16-bit sports game. Two big
 buttons, an undo button, and the format handled for you.
 
 Open `Fast4.xcodeproj` in Xcode and run. iOS 17+, iPhone and iPad.
@@ -41,14 +41,21 @@ next set.
 - `Fast4/Model/MatchStore.swift` — owns the live match and mirrors it into
   `UserDefaults` after every point, so quitting mid-match loses nothing.
 - `Fast4/Views/PixelKit.swift` — the pixel-art design system: palette, font,
-  the checkerboard field, chunky panels, beveled buttons that drop onto their
+  the grass court, the net, chunky panels, beveled buttons that drop onto their
   own shadow, hand-plotted icons, and an in-idiom modal (a system action sheet
   in the middle of a pixel game looks like a bug).
 - `Fast4/Views/` — setup screen, scoreboard, point-by-point history.
 
 ### Look
 
-White and shades of green, everything on a 4pt grid with square corners.
+White and shades of green, everything on a 4pt grid with square corners — a
+grass court is already white-on-green, so the palette and the subject agree.
+
+The backdrop is a mown grass court seen from above, with the singles markings
+and the net laid over the stripes. On the scoreboard the two players are
+separated by a net drawn in elevation, tape and mesh, because they are in fact
+on opposite sides of one. The title carries a racket with a strung lattice —
+filling the head solid reads as a lollipop, not a racket.
 
 The font is **Silkscreen** (SIL Open Font License, `Fast4/Resources/`),
 registered at launch with Core Text so no hand-written `Info.plist` is needed.

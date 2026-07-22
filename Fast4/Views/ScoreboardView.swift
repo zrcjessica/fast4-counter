@@ -13,7 +13,7 @@ struct ScoreboardView: View {
 
     var body: some View {
         ZStack {
-            GrassField()
+            CourtField()
 
             VStack(spacing: PixelTheme.unit * 3) {
                 topBar
@@ -136,9 +136,7 @@ struct ScoreboardView: View {
 
             ScoreRow(match: match, player: .one, nameSize: nameFontSize)
 
-            Rectangle()
-                .fill(PixelTheme.ink)
-                .frame(height: PixelTheme.unit)
+            PixelNet()
                 .padding(.horizontal, PixelTheme.unit * 2)
 
             ScoreRow(match: match, player: .two, nameSize: nameFontSize)

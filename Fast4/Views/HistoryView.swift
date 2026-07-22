@@ -7,7 +7,7 @@ struct HistoryView: View {
 
     var body: some View {
         ZStack {
-            GrassField()
+            CourtField()
 
             VStack(spacing: PixelTheme.unit * 3) {
                 header
