@@ -71,3 +71,12 @@ It covers each rule above plus serving rotation, undo across game/set/match
 boundaries, encode-decode round trips, and ~200k assertions swept over 400
 randomised matches (no set ever reaches 4-4, every set is won 4-x, a 4-3 set
 always came from a tie-break, and every match terminates).
+
+## Licence
+
+The code is MIT licensed — see [LICENSE](LICENSE).
+
+The bundled font is not covered by that licence. Silkscreen is licensed
+separately under the SIL Open Font License, and its terms are included at
+`Fast4/Resources/Silkscreen-OFL.txt`; that file must travel with the `.ttf` in
+any redistribution.
